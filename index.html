@@ -15,8 +15,8 @@
 /* ===== Supabase settings (Project Settings → API) =====
    The anon key is meant to be public: the tables are locked and every call checks the team code. */
 window.APP_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: ""
+  supabaseUrl: "https://jtlmbuihareyiqpnoege.supabase.co",
+  supabaseAnonKey: "sb_publishable_89QNTBVnNFRd3zieRN5k8g_UjpPi_JF"
 };
 </script>
 <style>
@@ -286,7 +286,8 @@ class BadCode extends Error{}
 async function rpc(fn,args){
   const res=await fetch(CFG.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn,{
     method:"POST",
-    headers:{"apikey":CFG.supabaseAnonKey,"Authorization":"Bearer "+CFG.supabaseAnonKey,"Content-Type":"application/json"},
+    headers:Object.assign({"apikey":CFG.supabaseAnonKey,"Content-Type":"application/json"},
+      /^eyJ/.test(CFG.supabaseAnonKey)?{"Authorization":"Bearer "+CFG.supabaseAnonKey}:{}), // publishable keys go in apikey only
     body:JSON.stringify({p_code:code,...args})});
   const text=await res.text();
   const body=text?JSON.parse(text):null;
